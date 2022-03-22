@@ -48,7 +48,7 @@ public class ExamController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    // TODO Быстрый костыль! Заменить метод!
     @GetMapping("/api/questions/userId/{userId}")
     public ResponseEntity<List<QuestionResponse>> getQuestions(@PathVariable(name = "userId") UUID userId) {
         UserEntity user = userService.get(userId);
@@ -56,20 +56,38 @@ public class ExamController {
         List<QuestionEntity> questionsForResponse = new ArrayList<>();
         if (user.getGroupName().equals(GroupType.KB.name())) {
             List<QuestionEntity> questions = questionService.getAllNotUsedKB();
-            for (int i = 0; i < 2; i++) {
-                QuestionEntity question = questions.get(i);
-                question.setUsedKB(true);
-                questionService.updateUsageStatus(question);
-                questionsForResponse.add(question);
+            if (questions.size() >= 2) {
+                for (int i = 0; i < 2; i++) {
+                    QuestionEntity question = questions.get(i);
+                    question.setUsedKB(true);
+                    questionService.updateUsageStatus(question);
+                    questionsForResponse.add(question);
+                }
+            } else {
+                List<QuestionEntity> allQuestions = questionService.getAll();
+                for (int i = 0; i < 2; i++) {
+                    QuestionEntity question = allQuestions.get(i);
+                    questionsForResponse.add(question);
+                }
             }
+
         } else {
             List<QuestionEntity> questions = questionService.getAllNotUsedPI();
-            for (int i = 0; i < 2; i++) {
-                QuestionEntity question = questions.get(i);
-                question.setUsedPI(true);
-                questionService.updateUsageStatus(question);
-                questionsForResponse.add(question);
+            if (questions.size() >= 2) {
+                for (int i = 0; i < 2; i++) {
+                    QuestionEntity question = questions.get(i);
+                    question.setUsedPI(true);
+                    questionService.updateUsageStatus(question);
+                    questionsForResponse.add(question);
+                }
+            } else {
+                List<QuestionEntity> allQuestions = questionService.getAll();
+                for (int i = 0; i < 2; i++) {
+                    QuestionEntity question = allQuestions.get(i);
+                    questionsForResponse.add(question);
+                }
             }
+
         }
 
         List<QuestionResponse> responses = new ArrayList<>();

@@ -24,9 +24,9 @@ public class QuestionController {
     private final EntityToResponse entityToResponse;
 
 
-    @PostMapping("/api/v1/adminId/{adminId}/{question}")
+    @PostMapping("/api/v1/adminId/{adminId}")
     public ResponseEntity<QuestionResponse> save(@PathVariable(name = "adminId") UUID adminId,
-                                                 @PathVariable(name = "question") String question) {
+                                                 @RequestBody String question) {
 
         if (securityService.checkAdminId(adminId)) {
             QuestionEntity savedQuestion = questionService.save(
@@ -66,10 +66,10 @@ public class QuestionController {
 
     }
 
-    @PutMapping("/api/v1/adminId/{adminId}/{questionId}/{question}")
+    @PutMapping("/api/v1/adminId/{adminId}/{questionId}")
     public ResponseEntity<List<QuestionResponse>> updateById(@PathVariable(name = "adminId") UUID adminId,
                                                              @PathVariable(name = "questionId") UUID questionId,
-                                                             @PathVariable(name = "question") String question) {
+                                                             @RequestBody String question) {
 
         if (securityService.checkAdminId(adminId)) {
             QuestionEntity updateQuestion = questionService.get(questionId);
