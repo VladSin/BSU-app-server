@@ -1,6 +1,7 @@
 package com.example.bsumts.controller;
 
 import com.example.bsumts.convert.EntityToResponse;
+import com.example.bsumts.dto.Question;
 import com.example.bsumts.dto.QuestionResponse;
 import com.example.bsumts.entity.exam.QuestionEntity;
 import com.example.bsumts.service.QuestionService;
@@ -26,11 +27,10 @@ public class QuestionController {
 
     @PostMapping("/api/v1/adminId/{adminId}")
     public ResponseEntity<QuestionResponse> save(@PathVariable(name = "adminId") UUID adminId,
-                                                 @RequestBody String question) {
-
+                                                 @RequestBody Question question) {
         if (securityService.checkAdminId(adminId)) {
             QuestionEntity savedQuestion = questionService.save(
-                    new QuestionEntity(null, question, false, false, null));
+                    new QuestionEntity(null, question.getQuestion(), false, false, null));
             return new ResponseEntity<>(entityToResponse.questionToResponse(savedQuestion), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -66,14 +66,14 @@ public class QuestionController {
 
     }
 
-    @PutMapping("/api/v1/adminId/{adminId}/{questionId}")
+    @PostMapping("/api/v1/adminId/{adminId}/{questionId}")
     public ResponseEntity<List<QuestionResponse>> updateById(@PathVariable(name = "adminId") UUID adminId,
                                                              @PathVariable(name = "questionId") UUID questionId,
-                                                             @RequestBody String question) {
+                                                             @RequestBody Question question) {
 
         if (securityService.checkAdminId(adminId)) {
             QuestionEntity updateQuestion = questionService.get(questionId);
-            updateQuestion.setQuestion(question);
+            updateQuestion.setQuestion(question.getQuestion());
             questionService.updateQuestion(updateQuestion);
 
             List<QuestionResponse> responses = new ArrayList<>();

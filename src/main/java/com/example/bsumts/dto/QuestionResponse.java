@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class QuestionResponse {
-    private UUID id;
+    private String id;
     private String question;
 }

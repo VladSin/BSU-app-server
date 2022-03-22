@@ -8,7 +8,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AnswersRequest {
-    private UUID userId;
-    private UUID questionId;
+    private String userId;
+    private String questionId;
     private String answer;
 }

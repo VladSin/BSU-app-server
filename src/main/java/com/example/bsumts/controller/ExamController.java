@@ -4,6 +4,7 @@ import com.example.bsumts.convert.EntityToResponse;
 import com.example.bsumts.dto.AnswersRequest;
 import com.example.bsumts.dto.QuestionResponse;
 import com.example.bsumts.dto.RegistrationRequest;
+import com.example.bsumts.dto.UserID;
 import com.example.bsumts.entity.auth.UserEntity;
 import com.example.bsumts.entity.exam.AnswerEntity;
 import com.example.bsumts.entity.exam.QuestionEntity;
@@ -35,7 +36,7 @@ public class ExamController {
 
 
     @PostMapping("/api/registration")
-    public ResponseEntity<String> registration(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<UserID> registration(@RequestBody RegistrationRequest request) {
         if (request != null) {
             UserEntity user = new UserEntity();
             user.setFirstName(request.getFirstName());
@@ -43,15 +44,17 @@ public class ExamController {
             user.setGroupName(request.getGroupName());
             user.setRole(roleService.getByName(RoleType.USER.name()));
             UserEntity savedUser = userService.save(user);
-            return new ResponseEntity<>(savedUser.getId().toString(), HttpStatus.OK);
+            UserID id = new UserID();
+            id.setId(savedUser.getId().toString());
+            return new ResponseEntity<>(id, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
     // TODO Быстрый костыль! Заменить метод!
     @GetMapping("/api/questions/userId/{userId}")
-    public ResponseEntity<List<QuestionResponse>> getQuestions(@PathVariable(name = "userId") UUID userId) {
-        UserEntity user = userService.get(userId);
+    public ResponseEntity<List<QuestionResponse>> getQuestions(@PathVariable(name = "userId") String userId) {
+        UserEntity user = userService.get(UUID.fromString(userId));
 
         List<QuestionEntity> questionsForResponse = new ArrayList<>();
         if (user.getGroupName().equals(GroupType.KB.name())) {
@@ -99,16 +102,16 @@ public class ExamController {
     }
 
     @PostMapping("/api/answers/userId/{userId}")
-    public void sendAnswer(@PathVariable(name = "userId") UUID userId,
+    public void sendAnswer(@PathVariable(name = "userId") String userId,
                            @RequestBody List<AnswersRequest> request) {
 
-        UserEntity user = userService.get(userId);
+        UserEntity user = userService.get(UUID.fromString(userId));
         for (AnswersRequest answer : request) {
             AnswerEntity newAnswer = new AnswerEntity(
                     null,
                     answer.getAnswer(),
                     user,
-                    questionService.get(answer.getQuestionId())
+                    questionService.get(UUID.fromString(answer.getQuestionId()))
             );
             answerService.save(newAnswer);
         }

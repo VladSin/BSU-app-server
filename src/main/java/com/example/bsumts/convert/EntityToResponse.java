@@ -33,7 +33,7 @@ public class EntityToResponse {
 
     public AnswerResponse answerToResponse(AnswerEntity answer) {
         AnswerResponse response = new AnswerResponse();
-        response.setId(answer.getId());
+        response.setId(answer.getId().toString());
         response.setAnswer(answer.getAnswer());
         response.setQuestion(answer.getQuestion().getQuestion());
         return response;
@@ -41,14 +41,14 @@ public class EntityToResponse {
 
     public QuestionResponse questionToResponse(QuestionEntity question) {
         QuestionResponse response = new QuestionResponse();
-        response.setId(question.getId());
+        response.setId(question.getId().toString());
         response.setQuestion(question.getQuestion());
         return response;
     }
 
     public RoleResponse roleToResponse(RoleEntity role) {
         RoleResponse response = new RoleResponse();
-        response.setId(role.getId());
+        response.setId(role.getId().toString());
         response.setName(role.getName());
         return response;
     }
